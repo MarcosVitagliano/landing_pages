@@ -1,0 +1,11 @@
+<a href="#conteudo" (click)="$event.preventDefault(); principal.focus()"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:text-ink focus:px-4 focus:py-2 focus:rounded">Pular para o conteúdo</a>
+
+<app-header />
+
+<main #principal id="conteudo" tabindex="-1" class="outline-none">
+  <router-outlet />
+</main>
+
+<app-footer />
+<app-chat-widget />

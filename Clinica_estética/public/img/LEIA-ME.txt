@@ -1,0 +1,36 @@
+FOTOS DO SITE
+
+JÁ INCLUÍDAS (fotos de banco de imagens Unsplash, para a proposta):
+  hero.jpg, clinica-recepcao.jpg, clinica-espera.jpg, clinica-cafe.jpg,
+  limpeza-de-pele.jpg, microagulhamento.jpg, harmonizacao-facial.jpg
+Para o site final, troque pelas fotos reais da clínica, mantendo os nomes.
+
+Salve as fotos nesta pasta (public/img) com EXATAMENTE estes nomes.
+Não precisa mexer no código: arquivo que não existir é substituído por um fundo rosa.
+
+TOPO DA PÁGINA (paisagem, 1920x1080)
+  hero.jpg
+
+A CLÍNICA (carrossel, 800x600)
+  clinica-fachada.jpg
+  clinica-recepcao.jpg
+  clinica-sala-atendimento.jpg
+  clinica-cafe.jpg
+  clinica-sala-procedimentos.jpg
+  clinica-espera.jpg
+
+PROCEDIMENTOS (cards grandes, 1200x800)
+  limpeza-de-pele.jpg
+  peeling.jpg
+  microagulhamento.jpg
+  drenagem-linfatica.jpg
+  massagem-modeladora.jpg
+  radiofrequencia.jpg
+  depilacao-a-laser.jpg
+  harmonizacao-facial.jpg
+
+DICAS
+- Formato JPG ou WebP. Para WebP, troque a extensão em src/app/core/data.ts.
+- Deixe cada foto com menos de 300 KB (compacte em squoosh.app).
+- Fotos de clientes só com autorização por escrito.
+- Bancos gratuitos para testes: Unsplash, Pexels e Pixabay (confira a licença de cada foto).
