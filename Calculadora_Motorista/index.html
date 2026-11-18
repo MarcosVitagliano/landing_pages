@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quanto sobra por dia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+:root{--bg:#020617;--card:#0a1224;--ink:#ffffff;--mute:#94a3b8;--line:#172338;--accent:#06b6d4;--on-accent:#021018;--pos:#10b981;--neg:#f87171;--field:#050c1c;--cyan:#22d3ee;--heading:"Plus Jakarta Sans","Inter",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+
+
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:clamp(1.6rem,4vw,2.2rem);margin:0 0 4px;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 20px}
+.grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:860px){.grid{grid-template-columns:1.15fr .85fr;align-items:start}.res{position:sticky;top:16px}}
+fieldset{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 14px;padding:14px 16px 16px}
+legend{font-weight:700;padding:0 6px;font-size:1.02rem}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-size:.88rem;color:var(--mute);margin-bottom:10px}
+input,select{width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--ink);font:inherit;font-size:1rem}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.days{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.days label{margin:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:6px;padding:7px 10px;background:var(--field);color:var(--ink);cursor:pointer}
+.days input{width:auto;margin:0}
+.chk{display:flex;align-items:center;gap:8px;color:var(--ink)}
+.chk input{width:auto;margin:0}
+.hint{font-size:.82rem;color:var(--mute);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.big{border-left:8px solid var(--accent);padding-left:14px;margin-bottom:16px}
+.big small{display:block;color:var(--mute)}
+.big strong{font-size:clamp(2.2rem,8vw,3rem);font-weight:800;line-height:1.1}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+dl{margin:0}
+dl div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+dl div:last-child{border-bottom:0}
+dt{color:var(--mute)}dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+h2{font-size:.95rem;margin:16px 0 4px;color:var(--cyan)}
+button{margin-top:14px;width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;background:var(--field);color:var(--ink);font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.tabela{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:540px}
+th,td{padding:4px;text-align:left;font-size:.9rem}
+td input{margin:0;padding:7px;min-width:72px}
+th[scope=row]{white-space:nowrap;font-weight:600}
+th small{display:block;color:var(--mute);font-weight:400}
+tr.par th{color:var(--mute)}
+.top{background:radial-gradient(circle at 88% 0%,rgba(6,182,212,.25),transparent 55%),#050d1f;color:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 22px 30px;margin-bottom:18px;position:relative;overflow:hidden}
+.top h1{margin:0 0 4px}
+.top .sub{color:#94a3b8;margin:0}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:3px;background:repeating-linear-gradient(90deg,#06b6d4 0 22px,transparent 22px 40px)}
+fieldset{border-left:5px solid var(--line)}
+fieldset.ganho{border-left-color:var(--pos)}
+fieldset.gasto{border-left-color:var(--neg)}
+fieldset.fixo{border-left-color:#22d3ee}
+.big{background:#04122a;color:#fff;border-radius:12px;padding:16px 18px}
+.big small{color:#94a3b8}
+.big .pos{color:#10b981}.big .neg{color:#f87171}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tiles div{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center}
+.tiles b{display:block;font-size:1.6rem;font-weight:800;line-height:1.2}
+.tiles span{font-size:.75rem;color:var(--mute)}
+.bar{display:flex;height:22px;border-radius:11px;overflow:hidden;background:var(--line);margin:6px 0 10px}
+.bar i{display:block;height:100%;transition:width .35s}
+.leg{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:5px;font-size:.85rem}
+.leg li{display:flex;align-items:center;gap:8px}
+.leg li span{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--mute)}
+.leg em{width:11px;height:11px;border-radius:3px;flex:none}
+.aviso{color:var(--neg);font-weight:600;font-size:.88rem;margin:0 0 8px}
+.pizza{display:flex;justify-content:center;margin:8px 0 14px}
+.pizza svg{width:min(230px,72%);height:auto;overflow:visible;filter:drop-shadow(0 0 14px rgba(6,182,212,.18))}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+.prim{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+.hist{margin-top:16px}
+.hist h2{margin-top:0;font-size:1.1rem}
+.hi{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.hi:last-child{border-bottom:0}
+.hi b{display:block}
+.hi small{display:block;color:var(--mute)}
+.hi .btns{display:flex;gap:8px}
+.hi button{margin:0;width:auto;padding:8px 14px}
+h1,h2,legend,.big strong,.tiles b,.bn{font-family:var(--heading)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mono{width:40px;height:40px;border-radius:10px;border:2px solid #06b6d4;color:#22d3ee;display:grid;place-items:center;font-family:var(--heading);font-weight:800;font-size:1.2rem;box-shadow:0 0 18px rgba(34,211,238,.35)}
+.bn{font-weight:700;line-height:1.15}
+.bn small{display:block;font-family:"Inter",system-ui,sans-serif;font-weight:400;color:#94a3b8;font-size:.75rem}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#020617"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Quanto sobra"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
+</head>
+<body>
+<main>
+<header class="top"><div class="brand"><span class="mono">M</span><span class="bn">MRS Soluções<small>Tecnologia para PMEs</small></span></div>
+<h1>Quanto sobra por dia</h1>
+<p class="sub">Preencha o que você ganha e gasta. O resultado muda na hora.</p></header>
+<div class="grid">
+<form onsubmit="return false" id="f">
+
+<fieldset><legend>📅 Período</legend>
+<div class="row">
+<label>Início<input type="date" id="ini"></label>
+<label>Fim<input type="date" id="fim"></label>
+</div>
+<p class="hint">Dias da semana em que você dirige:</p>
+<div class="days" id="dias"></div>
+</fieldset>
+
+<fieldset><legend>🚫 Rodízio</legend>
+<div class="row">
+<label>Final da placa
+<select id="placa"><option value="">Sem rodízio</option>
+<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+<option>6</option><option>7</option><option>8</option><option>9</option><option>0</option></select></label>
+<label>Dia do rodízio<input id="diaRod" readonly></label>
+</div>
+<label class="chk"><input type="checkbox" id="semRod" checked> Não dirigir no dia do rodízio</label>
+</fieldset>
+
+<fieldset><legend>Como lançar os valores</legend>
+<label>Forma de lançamento
+<select id="modo"><option value="medio">Valor médio por dia</option><option value="diario">Dia a dia</option></select></label>
+<p class="hint">No modo dia a dia, você preenche cada dia. Só entram na conta os dias com algum valor lançado.</p>
+</fieldset>
+
+<div id="diario" hidden><fieldset><legend>Lançamento diário (R$)</legend>
+<div class="tabela"><table id="tbDia"></table></div>
+<p class="hint">Dias de rodízio ou folga também aceitam valores, caso você tenha rodado.</p>
+</fieldset></div>
+
+<div id="medios">
+<fieldset class="ganho"><legend>💰 Ganhos por dia trabalhado (R$)</legend>
+<div class="row">
+<label>Uber<input type="number" id="uber" min="0" step="0.01" inputmode="decimal"></label>
+<label>99<input type="number" id="n99" min="0" step="0.01" inputmode="decimal"></label>
+</div>
+</fieldset>
+
+<fieldset class="gasto"><legend>⛽ Gastos por dia trabalhado (R$)</legend>
+<div class="row">
+<label>Abastecimento<input type="number" id="comb" min="0" step="0.01" inputmode="decimal"></label>
+<label>Alimentação<input type="number" id="alim" min="0" step="0.01" inputmode="decimal"></label>
+<label>Outros gastos<input type="number" id="outros" min="0" step="0.01" inputmode="decimal"></label>
+</div>
+</fieldset>
+</div>
+
+<fieldset class="fixo"><legend>🏠 Custos fixos</legend>
+<div class="row">
+<label>Aluguel do carro (R$)<input type="number" id="alug" min="0" step="0.01" inputmode="decimal"></label>
+<label>Cobrado por
+<select id="alugTipo"><option value="dia">dia</option><option value="semana">semana</option><option value="mes" selected>mês</option></select></label>
+<label>Garagem por mês (R$)<input type="number" id="gar" min="0" step="0.01" inputmode="decimal"></label>
+<label>Outro gasto do carro por mês (R$)<input type="number" id="carroMes" min="0" step="0.01" inputmode="decimal"></label>
+</div>
+<div class="row">
+<label>Caução (R$)<input type="number" id="cau" min="0" step="0.01" inputmode="decimal"></label>
+<label>Dividir a caução em (dias)<input type="number" id="cauDias" min="1" step="1" inputmode="numeric" placeholder="dias do período"></label>
+</div>
+<p class="hint">O aluguel e a garagem contam todos os dias do calendário, mesmo nos dias em que você não dirige.</p>
+</fieldset>
+
+</form>
+
+<aside class="res" aria-live="polite">
+<div class="card">
+<div class="big"><small>Sobra por dia trabalhado</small><strong id="liq">R$ 0,00</strong></div>
+<div class="tiles"><div><b id="dCal">0</b><span>dias no período</span></div><div><b id="dTra">0</b><span>dias rodando</span></div><div><b id="dPar">0</b><span>dias parados</span></div></div>
+<h2>Para onde vai o seu ganho</h2>
+<div class="pizza"><svg id="pizza" viewBox="-1.02 -1.02 2.04 2.04" role="img" aria-label="Divisão do ganho diário"></svg></div>
+<p class="aviso" id="aviso" hidden>Os gastos passam do que você ganha por dia.</p>
+<ul class="leg" id="leg"></ul>
+<h2>Por dia trabalhado</h2>
+<dl>
+<div><dt>Ganho bruto</dt><dd id="rBruto">R$ 0,00</dd></div>
+<div><dt>Abastecimento</dt><dd id="rComb">R$ 0,00</dd></div>
+<div><dt>Alimentação</dt><dd id="rAlim">R$ 0,00</dd></div>
+<div><dt>Outros gastos</dt><dd id="rOut">R$ 0,00</dd></div>
+<div><dt>Aluguel do carro</dt><dd id="rAlug">R$ 0,00</dd></div>
+<div><dt>Garagem</dt><dd id="rGar">R$ 0,00</dd></div>
+<div><dt>Outro gasto do carro</dt><dd id="rCarro">R$ 0,00</dd></div>
+<div><dt>Caução</dt><dd id="rCau">R$ 0,00</dd></div>
+</dl>
+<h2>No período</h2>
+<dl>
+<div><dt>Ganho bruto</dt><dd id="tBruto">R$ 0,00</dd></div>
+<div><dt>Total de gastos</dt><dd id="tGasto">R$ 0,00</dd></div>
+<div><dt>Lucro líquido</dt><dd id="tLiq">R$ 0,00</dd></div>
+<div><dt>Lucro por dia do calendário</dt><dd id="tCal">R$ 0,00</dd></div>
+</dl>
+<label style="margin-top:14px">Nome do período (opcional)<input id="nomeSave" maxlength="60" placeholder="ex.: Semana 1 de novembro"></label>
+<button type="button" id="salvarHist" class="prim" style="margin-top:0">💾 Salvar no histórico</button>
+<p class="hint" id="msg" role="status"></p>
+<button type="button" id="limpar">Limpar tudo</button>
+</div>
+</aside>
+</div>
+<section class="card hist"><h2>📚 Histórico de períodos</h2>
+<p class="hint" id="hsoma"></p>
+<div id="hlist"></div>
+<p class="hint">O histórico fica guardado neste navegador, neste aparelho. "Limpar tudo" não apaga o histórico.</p></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const NOMES=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+// Rodízio de São Paulo: final da placa → dia da semana (0=dom)
+const ROD={1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4,9:5,0:5};
+const NOMEDIA=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const brl=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(isFinite(v)?v:0);
+const num=id=>Math.max(0,parseFloat($(id).value)||0);
+let diario={},ultimaSig=null,ultimo=null;
+function renderDiario(lista){
+  const col={u:'Uber',n:'99',c:'Abastecimento',a:'Alimentação',o:'Outros'};
+  const cab='<tr><th>Dia</th><th>Uber</th><th>99</th><th>Abastec.</th><th>Alim.</th><th>Outros</th></tr>';
+  const p2=n=>String(n).padStart(2,'0');
+  $('tbDia').innerHTML=cab+lista.map(x=>{const r=diario[x.k]||{};
+    return `<tr class="${x.tag?'par':''}"><th scope="row">${NOMES[x.w]} ${p2(x.d)}/${p2(x.m)}${x.tag?`<small>${x.tag}</small>`:''}</th>`+Object.keys(col).map(c=>`<td><input type="number" min="0" step="0.01" inputmode="decimal" data-k="${x.k}" data-c="${c}" aria-label="${col[c]} em ${p2(x.d)}/${p2(x.m)}" value="${r[c]??''}"></td>`).join('')+'</tr>'}).join('');
+}
+const campos=['modo','ini','fim','placa','semRod','uber','n99','comb','alim','outros','alug','alugTipo','gar','carroMes','cau','cauDias'];
+
+// checkboxes dos dias da semana (seg a sáb marcados por padrão)
+$('dias').innerHTML=NOMES.map((n,i)=>`<label><input type="checkbox" data-d="${i}" ${i>0&&i<6?'checked':''}> ${n}</label>`).join('');
+
+function hoje(){const d=new Date();return d.toISOString().slice(0,10)}
+function dataLocal(s){const[a,m,d]=s.split('-').map(Number);return new Date(a,m-1,d)}
+
+function salvar(){
+  try{
+    const o={};campos.forEach(c=>{const e=$(c);o[c]=e.type==='checkbox'?e.checked:e.value});
+    o.dias=[...document.querySelectorAll('[data-d]')].map(e=>e.checked);o.diario=diario;
+    localStorage.setItem('calc-motorista',JSON.stringify(o));
+  }catch(e){}
+}
+function carregar(){
+  try{
+    const o=JSON.parse(localStorage.getItem('calc-motorista')||'null');if(!o)return;
+    campos.forEach(c=>{if(c in o){const e=$(c);if(e.type==='checkbox')e.checked=o[c];else e.value=o[c]}});
+    if(o.dias)document.querySelectorAll('[data-d]').forEach((e,i)=>e.checked=!!o.dias[i]);
+    if(o.diario)diario=o.diario;
+  }catch(e){}
+}
+
+function calcular(){
+  const placa=$('placa').value;
+  const rod=placa===''?null:ROD[placa];
+  $('diaRod').value=rod===null?'—':NOMEDIA[rod];
+  const marcados=[...document.querySelectorAll('[data-d]')].map(e=>e.checked);
+  let cal=0,trab=0;const lista=[];
+  if($('ini').value&&$('fim').value){
+    let d=dataLocal($('ini').value);const f=dataLocal($('fim').value);
+    while(d<=f&&cal<3660){
+      cal++;
+      const w=d.getDay();
+      const folga=!marcados[w];
+      const dr=rod!==null&&$('semRod').checked&&w===rod;
+      const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      lista.push({k,w,d:d.getDate(),m:d.getMonth()+1,tag:dr?'rodízio':folga?'folga':''});
+      if(!folga&&!dr)trab++;
+      d.setDate(d.getDate()+1);
+    }
+  }
+  const diarioOn=$('modo').value==='diario';
+  $('medios').hidden=diarioOn;$('diario').hidden=!diarioOn;
+  let t=trab,uber=num('uber'),n99=num('n99'),pc=num('comb'),pa=num('alim'),po=num('outros');
+  if(diarioOn){
+    const sig=lista.map(x=>x.k+x.tag).join();
+    if(sig!==ultimaSig){ultimaSig=sig;renderDiario(lista)}
+    const s=[0,0,0,0,0];t=0;
+    lista.forEach(x=>{const r=diario[x.k]||{};
+      const v=['u','n','c','a','o'].map(c=>Math.max(0,parseFloat(r[c])||0));
+      v.forEach((n,i)=>s[i]+=n);if(v.some(n=>n>0))t++});
+    [uber,n99,pc,pa,po]=t?s.map(n=>n/t):[0,0,0,0,0];
+  }
+  const por=v=>t?v/t:0;
+  // fixos: total no período ÷ dias trabalhados
+  const v=num('alug');const tipo=$('alugTipo').value;
+  const alugTotal=tipo==='dia'?v*cal:tipo==='semana'?v/7*cal:v/30*cal;
+  const garTotal=num('gar')/30*cal;
+  const carroTotal=num('carroMes')/30*cal;
+  const divDias=parseInt($('cauDias').value)||cal;
+  const cauTotal=divDias?num('cau')/divDias*cal:0;
+  const cauTotalCap=Math.min(cauTotal,num('cau'));
+  const bruto=(uber+n99);
+  const brutoTotal=bruto*t;
+  const varDia=pc+pa+po;
+  const gastoTotal=varDia*t+alugTotal+garTotal+carroTotal+cauTotalCap;
+  const liqTotal=brutoTotal-gastoTotal;
+  const liqDia=por(liqTotal);
+
+  $('dCal').textContent=cal;$('dTra').textContent=t;$('dPar').textContent=cal-t;
+  $('liq').textContent=brl(liqDia);$('liq').className=liqDia<0?'neg':'pos';
+  $('rBruto').textContent=brl(bruto);
+  $('rComb').textContent=brl(pc);
+  $('rAlim').textContent=brl(pa);
+  $('rOut').textContent=brl(po);
+  $('rAlug').textContent=brl(por(alugTotal));
+  $('rGar').textContent=brl(por(garTotal));
+  $('rCarro').textContent=brl(por(carroTotal));
+  $('rCau').textContent=brl(por(cauTotalCap));
+  $('tBruto').textContent=brl(brutoTotal);
+  $('tGasto').textContent=brl(gastoTotal);
+  $('tLiq').textContent=brl(liqTotal);$('tLiq').className=liqTotal<0?'neg':'pos';
+  $('tCal').textContent=brl(cal?liqTotal/cal:0);
+  const itens=[['Abastecimento',pc,'#e8833a'],['Alimentação',pa,'#d9628b'],['Outros gastos',po,'#8c97a3'],['Aluguel do carro',por(alugTotal),'#22d3ee'],['Garagem',por(garTotal),'#818cf8'],['Outro gasto do carro',por(carroTotal),'#8e66c8'],['Caução',por(cauTotalCap),'#a9794a']];
+  const gDia=itens.reduce((s,x)=>s+x[1],0);
+  const todos=[...itens,['Sobra no bolso',Math.max(0,bruto-gDia),'#10b981']].filter(x=>x[1]>0.005);
+  const den=Math.max(bruto,gDia);
+  let ang=-Math.PI/2;
+  $('pizza').innerHTML=den?todos.map(x=>{const f=x[1]/den;
+    if(f>=0.9995)return `<circle r="1" fill="${x[2]}"><title>${x[0]}</title></circle>`;
+    const a0=ang,a1=ang+f*2*Math.PI;ang=a1;
+    const p=a=>`${Math.cos(a).toFixed(4)} ${Math.sin(a).toFixed(4)}`;
+    return `<path d="M0 0 L${p(a0)} A1 1 0 ${f>.5?1:0} 1 ${p(a1)} Z" fill="${x[2]}" stroke="var(--card)" stroke-width=".02"><title>${x[0]}: ${Math.round(f*100)}%</title></path>`}).join(''):'';
+  $('leg').innerHTML=den?todos.map(x=>`<li><em style="background:${x[2]}"></em>${x[0]}<span>${brl(x[1])} · ${Math.round(x[1]/den*100)}%</span></li>`).join(''):'<li>Preencha os valores para ver a divisão.</li>';
+  $('aviso').hidden=!(bruto>0&&gDia>bruto);
+  ultimo={liqDia,liqTotal,brutoTotal,gastoTotal,t,cal};
+}
+
+carregar();
+if(!$('ini').value){const h=new Date();$('ini').value=new Date(h.getFullYear(),h.getMonth(),1).toISOString().slice(0,10).replace(/-\d\d$/,'-01');
+  $('fim').value=new Date(h.getFullYear(),h.getMonth()+1,0,12).toISOString().slice(0,10)}
+$('f').addEventListener('input',e=>{const el=e.target;
+  if(el.dataset&&el.dataset.k){(diario[el.dataset.k]=diario[el.dataset.k]||{})[el.dataset.c]=el.value}
+  calcular();salvar()});
+$('limpar').addEventListener('click',()=>{
+  try{localStorage.removeItem('calc-motorista')}catch(e){}
+  diario={};ultimaSig=null;
+  $('f').reset();
+  document.querySelectorAll('[data-d]').forEach((e,i)=>e.checked=i>0&&i<6);
+  $('semRod').checked=true;calcular();
+});
+let hist=[];
+const HK='calc-motorista-hist';
+try{hist=JSON.parse(localStorage.getItem(HK)||'[]')}catch(e){hist=[]}
+if(!Array.isArray(hist))hist=[];
+function gravaHist(){try{localStorage.setItem(HK,JSON.stringify(hist))}catch(e){}}
+const fd=s=>s?s.split('-').reverse().join('/'):'';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderHist(){
+  const soma=hist.reduce((s,h)=>s+h.res.liqTotal,0);
+  $('hlist').innerHTML=hist.length?hist.map(h=>`<div class="hi"><div><b>${esc(h.nome)}</b><small>${fd(h.ini)} a ${fd(h.fim)} · ${h.res.t} dias rodando · salvo em ${new Date(h.criado).toLocaleDateString('pt-BR')}</small><small>Líquido ${brl(h.res.liqTotal)} · ${brl(h.res.liqDia)} por dia trabalhado</small></div><div class="btns"><button type="button" data-a="load" data-id="${h.id}">Carregar</button><button type="button" data-a="del" data-id="${h.id}">Excluir</button></div></div>`).join(''):'<p class="hint">Nenhum período salvo ainda.</p>';
+  $('hsoma').textContent=hist.length?`${hist.length} salvo(s) · líquido somado: ${brl(soma)}`:'';
+}
+$('salvarHist').addEventListener('click',()=>{
+  const m=$('msg');
+  if(!ultimo||!ultimo.t||!$('ini').value||!$('fim').value){m.textContent='Informe o período e lance algum valor antes de salvar.';return}
+  const o={};campos.forEach(c=>{const e=$(c);o[c]=e.type==='checkbox'?e.checked:e.value});
+  o.dias=[...document.querySelectorAll('[data-d]')].map(e=>e.checked);
+  o.diario=JSON.parse(JSON.stringify(diario));
+  hist.unshift({id:Date.now().toString(36),nome:$('nomeSave').value.trim()||`${fd($('ini').value)} a ${fd($('fim').value)}`,criado:Date.now(),ini:$('ini').value,fim:$('fim').value,res:{...ultimo},estado:o});
+  gravaHist();renderHist();$('nomeSave').value='';m.textContent='Período salvo no histórico.';
+});
+$('hlist').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const i=hist.findIndex(h=>h.id===b.dataset.id);if(i<0)return;
+  if(b.dataset.a==='del'){
+    if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Confirmar';setTimeout(()=>{b.dataset.sure='';b.textContent='Excluir'},3000);return}
+    hist.splice(i,1);gravaHist();renderHist();return}
+  const o=hist[i].estado;
+  campos.forEach(c=>{if(c in o){const el=$(c);if(el.type==='checkbox')el.checked=o[c];else el.value=o[c]}});
+  document.querySelectorAll('[data-d]').forEach((el,k)=>el.checked=!!(o.dias&&o.dias[k]));
+  diario=JSON.parse(JSON.stringify(o.diario||{}));ultimaSig=null;
+  calcular();salvar();$('msg').textContent='Período carregado.';scrollTo({top:0,behavior:'smooth'});
+});
+calcular();renderHist();
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>
